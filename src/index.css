@@ -1,0 +1,53 @@
+/* Mobile-first base styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Global mobile optimizations */
+* {
+  box-sizing: border-box;
+}
+
+/* Prevent iOS bounce scrolling */
+html, body {
+  overflow-x: hidden;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch-friendly interactive elements */
+button, input, select, textarea {
+  font-size: 16px; /* Prevents zoom on iOS */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Better touch targets */
+button {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}

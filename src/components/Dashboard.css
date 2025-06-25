@@ -1,0 +1,384 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.dashboard-header {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard-header h2 {
+  color: #282c34;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info span {
+  color: #666;
+  font-weight: 500;
+}
+
+.sign-out-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.sign-out-btn:hover {
+  background: #c82333;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.location-status {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.location-status p {
+  margin: 5px 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.location-status p:first-child {
+  margin-top: 0;
+}
+
+.location-status p:last-child {
+  margin-bottom: 0;
+}
+
+.location-status .error {
+  color: #dc3545;
+}
+
+.current-session, .check-in-section, .recent-sessions {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.current-session h3, .check-in-section h3, .recent-sessions h3 {
+  color: #282c34;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.checkin-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 18px 30px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  min-height: 56px;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.checkin-btn:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.checkin-btn:active {
+  transform: translateY(0);
+}
+
+.checkin-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.session-card {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: box-shadow 0.3s;
+}
+
+.session-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.session-card.active {
+  border-color: #28a745;
+  background: #f8fff9;
+}
+
+.session-card.completed {
+  border-color: #007bff;
+  background: #f8f9ff;
+}
+
+.session-card.cancelled {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.session-header h4 {
+  margin: 0;
+  color: #282c34;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status.active {
+  background: #28a745;
+  color: white;
+}
+
+.status.completed {
+  background: #007bff;
+  color: white;
+}
+
+.status.cancelled {
+  background: #dc3545;
+  color: white;
+}
+
+.session-card p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.session-card p strong {
+  color: #282c34;
+}
+
+.session-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.checkout-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  min-height: 44px;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.checkout-btn:hover {
+  background: #0056b3;
+}
+
+.checkout-btn:active {
+  transform: scale(0.98);
+}
+
+.cancel-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.cancel-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.sessions-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.active-sessions {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  border-left: 4px solid #28a745;
+}
+
+.active-sessions h3 {
+  color: #28a745;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.quality-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.quality-badge.excellent {
+  background: #d4edda;
+  color: #155724;
+}
+
+.quality-badge.good {
+  background: #cce7ff;
+  color: #004085;
+}
+
+.quality-badge.satisfactory {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.quality-badge.needs_review {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 10px;
+    padding-top: env(safe-area-inset-top, 10px);
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    padding: 15px;
+    position: relative;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .checkin-btn {
+    max-width: none;
+    font-size: 20px;
+    padding: 20px;
+    min-height: 60px;
+  }
+  
+  .session-actions {
+    flex-direction: column;
+  }
+  
+  .checkout-btn,
+  .cancel-btn {
+    width: 100%;
+    font-size: 16px;
+    min-height: 48px;
+  }
+  
+  .session-card {
+    padding: 12px;
+  }
+  
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 8px;
+  }
+  
+  .current-session, .check-in-section, .recent-sessions, .active-sessions {
+    padding: 15px;
+  }
+  
+  .dashboard-header {
+    padding: 12px;
+  }
+  
+  .session-card p {
+    font-size: 14px;
+  }
+}
+
+.test-mode-btn {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.test-mode-btn:hover {
+  background: #007bff;
+} 
