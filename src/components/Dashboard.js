@@ -8,6 +8,8 @@ import './Dashboard.css';
 function Dashboard() {
   const [location, setLocation] = useState(null);
   const [postcode, setPostcode] = useState(null);
+  const [postcodeLoading, setPostcodeLoading] = useState(false);
+  const [postcodeError, setPostcodeError] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [activeSessions, setActiveSessions] = useState([]);
   const [completedSessions, setCompletedSessions] = useState([]);
@@ -18,24 +20,52 @@ function Dashboard() {
 
   const user = auth.currentUser;
 
-  // Function to get postcode from coordinates
+  // Enhanced postcode function with better error handling
   const getPostcodeFromCoords = async (lat, lng) => {
+    setPostcodeLoading(true);
+    setPostcodeError(null);
+    
     try {
-      const response = await fetch(`https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`);
+      console.log('Attempting postcode lookup for:', lat, lng);
+      
+      const response = await fetch(`https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+        // Add timeout for mobile networks
+        signal: AbortSignal.timeout(10000) // 10 second timeout
+      });
+      
+      console.log('Postcode API response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('Postcode API data:', data);
       
       if (data.status === 200 && data.result && data.result.length > 0) {
-        return data.result[0].postcode;
+        const foundPostcode = data.result[0].postcode;
+        console.log('Found postcode:', foundPostcode);
+        setPostcodeLoading(false);
+        return foundPostcode;
+      } else {
+        console.log('No postcode found in API response');
+        setPostcodeError('No postcode found for this location');
+        setPostcodeLoading(false);
+        return null;
       }
-      return null;
     } catch (error) {
-      console.error('Error fetching postcode:', error);
+      console.error('Postcode lookup error:', error);
+      setPostcodeError(`Postcode lookup failed: ${error.message}`);
+      setPostcodeLoading(false);
       return null;
     }
   };
 
   useEffect(() => {
-    // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -46,12 +76,17 @@ function Dashboard() {
           };
           setLocation(locationData);
           
-          // Get postcode for this location
-          const postcodeData = await getPostcodeFromCoords(
-            locationData.latitude, 
-            locationData.longitude
-          );
-          setPostcode(postcodeData);
+          // Get postcode for this location with better error handling
+          try {
+            const postcodeData = await getPostcodeFromCoords(
+              locationData.latitude, 
+              locationData.longitude
+            );
+            setPostcode(postcodeData);
+          } catch (error) {
+            console.error('Failed to get postcode:', error);
+            setPostcodeError('Unable to determine postcode');
+          }
         },
         (error) => {
           setLocationError('Location access denied. Please enable location services.');
@@ -257,14 +292,25 @@ function Dashboard() {
       </div>
 
       <div className="dashboard-content">
-        {/* Location Status */}
+        {/* Enhanced Location Status with debugging */}
         <div className="location-status">
           {location ? (
             <div>
               <p>📍 Location: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)} 
                  (±{Math.round(location.accuracy)}m)</p>
+              
+              {postcodeLoading && (
+                <p>🔄 Looking up postcode...</p>
+              )}
+              
               {postcode && (
                 <p>🏠 Nearest Postcode: <strong>{postcode}</strong></p>
+              )}
+              
+              {postcodeError && (
+                <p style={{color: '#ff6b6b', fontSize: '12px'}}>
+                  ⚠️ {postcodeError}
+                </p>
               )}
             </div>
           ) : (
