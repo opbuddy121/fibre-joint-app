@@ -7,6 +7,7 @@ import './Dashboard.css';
 
 function Dashboard() {
   const [location, setLocation] = useState(null);
+  const [postcode, setPostcode] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [activeSessions, setActiveSessions] = useState([]);
   const [completedSessions, setCompletedSessions] = useState([]);
@@ -17,16 +18,40 @@ function Dashboard() {
 
   const user = auth.currentUser;
 
+  // Function to get postcode from coordinates
+  const getPostcodeFromCoords = async (lat, lng) => {
+    try {
+      const response = await fetch(`https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`);
+      const data = await response.json();
+      
+      if (data.status === 200 && data.result && data.result.length > 0) {
+        return data.result[0].postcode;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching postcode:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
+        async (position) => {
+          const locationData = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             accuracy: position.coords.accuracy
-          });
+          };
+          setLocation(locationData);
+          
+          // Get postcode for this location
+          const postcodeData = await getPostcodeFromCoords(
+            locationData.latitude, 
+            locationData.longitude
+          );
+          setPostcode(postcodeData);
         },
         (error) => {
           setLocationError('Location access denied. Please enable location services.');
@@ -112,6 +137,12 @@ function Dashboard() {
     setLoading(true);
 
     try {
+      // Get postcode for check-in location
+      const currentPostcode = await getPostcodeFromCoords(
+        location.latitude, 
+        location.longitude
+      );
+
       await addDoc(collection(db, 'sessions'), {
         engineerId: user.uid,
         engineerEmail: user.email,
@@ -122,7 +153,8 @@ function Dashboard() {
         location: {
           latitude: location.latitude,
           longitude: location.longitude,
-          accuracy: location.accuracy
+          accuracy: location.accuracy,
+          postcode: currentPostcode
         },
         createdAt: new Date()
       });
@@ -228,8 +260,13 @@ function Dashboard() {
         {/* Location Status */}
         <div className="location-status">
           {location ? (
-            <p>📍 Location: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)} 
-               (±{Math.round(location.accuracy)}m)</p>
+            <div>
+              <p>📍 Location: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)} 
+                 (±{Math.round(location.accuracy)}m)</p>
+              {postcode && (
+                <p>🏠 Nearest Postcode: <strong>{postcode}</strong></p>
+              )}
+            </div>
           ) : (
             <p className="error">⚠️ {locationError || 'Getting location...'}</p>
           )}
@@ -263,7 +300,11 @@ function Dashboard() {
                   <p><strong>Duration:</strong> {getSessionDuration(session.startTime)}</p>
                   <p><strong>Location:</strong> {session.location ? 
                     `${session.location.latitude.toFixed(4)}, ${session.location.longitude.toFixed(4)}` : 
-                    'Not available'}</p>
+                    'Not available'}
+                    {session.location?.postcode && (
+                      <span> (Near <strong>{session.location.postcode}</strong>)</span>
+                    )}
+                  </p>
                   <div className="session-actions">
                     <button 
                       className="checkout-btn"
@@ -316,7 +357,11 @@ function Dashboard() {
                   
                   <p><strong>📍 Check-in Location:</strong> {session.location ? 
                     `${session.location.latitude.toFixed(4)}, ${session.location.longitude.toFixed(4)} (±${Math.round(session.location.accuracy || 0)}m)` : 
-                    'Location not recorded'}</p>
+                    'Location not recorded'}
+                    {session.location?.postcode && (
+                      <span> - <strong>{session.location.postcode}</strong></span>
+                    )}
+                  </p>
                   
                   {session.status === 'completed' && (
                     <>
